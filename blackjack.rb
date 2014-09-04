@@ -47,6 +47,16 @@ class Card
 
     value
   end
+
+  # def find_ace(hand)
+  #   ace_count = 0
+  #   hand.each do |cards|
+  #     if cards.rank == "A"
+  #       ace_count +=1
+  #     end
+  #   end
+  # end
+
 end
 
 class Hand
@@ -56,18 +66,6 @@ class Hand
     @cards = cards
   end
 
-  # def intial_score
-  #   initial_hand = []
-  #   initial_hand << card1.value_of_card
-  #   initial_hand << card2.value_of_card
-  #   first_hand_score= initial_hand.inject(0){|result,element| result + element}
-  #   first_hand_score
-  # end
-
-  # def new_score
-  #   new_hand = initial_hand
-  #   current_score = new_hand.inject(0){|result,element| result + element}
-  # end
 
   def score(hand)
     hand_score = 0
@@ -81,6 +79,17 @@ class Hand
 
 end
 ################################################################################
+  def find_ace(hand)
+    ace_count = 0
+    hand.each do |cards|
+      if cards.rank == "A"
+        ace_count +=1
+      end
+    end
+    ace_count
+  end
+
+
 playing_deck = Deck.new
 #binding.pry
 player_hand = Hand.new
@@ -101,24 +110,39 @@ end
 puts "Player score #{player_hand.score(player_hand.cards)}"
 
 puts "Hit or Stand (H/S)"
-answer = gets.chomp.upcase
+answer = gets.upcase
+   if answer != "HIT" || answer != "STAY" || answer != "S" || answer != "H"
+    puts "We don't understand your response. Please use stay or hit (H/S)"
+    answer.gets.upcase
+   end
  # need a prompt to suggest they need to put in a valid input
-  while answer != "S"
-    #binding.pry
-      #binding.pry
+  #while player_hand.score(player_hand.cards) <= 21
+  while answer != "S" || answer != "STAND"
+
       playing_deck.deal(player_hand)
-      #binding.pry
-      if player_hand.score(player_hand.cards) < 21
+      puts "New Card: #{player_hand.cards[-1].rank}#{player_hand.cards[-1].suit}"
+
+      if player_hand.score(player_hand.cards) <= 21
         puts "Player score #{player_hand.score(player_hand.cards)}"
+        binding.pry
         puts "Hit or Stand (H/S)"
-        answer = gets.chomp
-      elsif player_hand.score(player_hand.cards) == 21
-        puts "21!"
+        answer = gets.upcase
       else
-        puts "Bust! Game over..."
-      break
+        ace_count = find_ace(player_hand.cards)
+          if ace_count >= 1
+            player_hand.score(player_hand.cards) = (player_hand.score(player_hand.cards) - (10 * ace_count))
+            binding.pry
+            puts "Player score #{player_hand.score(player_hand.cards)}"
+            puts "Hit or Stand (H/S)"
+            answer = gets.chomp
+          else
+            puts "Bust! Game over..."
+            break
+          end
       end
-   puts "Player score #{player_hand.score(player_hand.cards)}"
+
+
+  puts "Player score #{player_hand.score(player_hand.cards)}"
   end
 
 
@@ -129,24 +153,51 @@ end
 
 puts "Dealer score #{dealer_hand.score(dealer_hand.cards)}"
 
-  while dealer_hand.score(dealer_hand.cards) < 17
+
+
+
+
+
+
+while dealer_hand.score(dealer_hand.cards) < 17
         playing_deck.deal(dealer_hand)
-        puts "Dealer Hits..."
-          if dealer_hand.score(dealer_hand.cards) > 21
-            puts "You win!"
-            break
-        end
-    end
+         puts "Dealer Hits..."
+puts "New Card: #{dealer_hand.cards[-1].rank}#{dealer_hand.cards[-1].suit}"
 
-    if dealer_hand.score(dealer_hand.cards) < 21
-      puts "Dealer stands with a score of #{dealer_hand.score(dealer_hand.cards)}"
+#           if dealer_hand.score(dealer_hand.cards) > 21
+#             puts "You win!"
+#             break
+#           end
+  end
 
-    if player_hand.score(player_hand.cards) > dealer_hand.score(dealer_hand.cards)
-          puts "You win!"
+  if dealer_hand.score(dealer_hand.cards) <= 21
+    puts "Dealer stands with a score of #{dealer_hand.score(dealer_hand.cards)}"
+  else
+   puts "You win! Dealer busts!"
+  end
+
+
+if player_hand.score(player_hand.cards) <= 21 && dealer_hand.score(dealer_hand.cards) <= 21
+       if player_hand.score(player_hand.cards) > dealer_hand.score(dealer_hand.cards)
+           puts "You win because you are a winnerpla!"
         else
-        "Dealer wins"
+         puts "Dealer wins"
         end
+# else
+#         puts "Dealer wins yet again"
+end
 
+
+ #   if player_hand.score(player_hand.cards) <= 21
+ #       #binding.pry
+ #       if player_hand.score(player_hand.cards) > dealer_hand.score(dealer_hand.cards)
+ #           puts "You win because you are a winnerpla!"
+ #         else
+ #         "Dealer wins"
+ #         end
+ #  else
+ #   puts "Dealer wins yet again"
+ # end
 
 
 
