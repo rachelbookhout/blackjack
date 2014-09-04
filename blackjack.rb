@@ -1,5 +1,3 @@
-require 'pry'
-
 class Deck
   attr_reader :cards
 
@@ -24,7 +22,6 @@ class Deck
   end
 
   def deal(hand)
-    # binding.pry
     hand.cards << cards.pop
   end
 end
@@ -45,7 +42,6 @@ class Card
     else
       value = 11
     end
-
     value
   end
 
@@ -62,15 +58,12 @@ class Hand
   def score(hand)
     hand_score = 0
     hand.each do |card|
-      #binding.pry
       hand_score += card.value_of_card(card)
     end
   hand_score
   end
-
-
 end
-################################################################################
+
   def find_ace(hand)
     ace_count = 0
     hand.each do |cards|
@@ -83,15 +76,12 @@ end
 
 
 playing_deck = Deck.new
-#binding.pry
 player_hand = Hand.new
-#binding.pry
 dealer_hand = Hand.new
 
-# setup initial hands
+
 2.times do
   playing_deck.deal(player_hand)
-  # binding.pry
   playing_deck.deal(dealer_hand)
 end
 
@@ -103,28 +93,24 @@ puts "Player score #{player_hand.score(player_hand.cards)}"
 
 puts "Hit or Stand (H/S)"
 answer = gets.chomp.upcase
-   # if answer != "HIT" || answer != "STAY" || answer != "S" || answer != "H"
-   #  puts "We don't understand your response. Please use stay or hit (H/S)"
-   #  answer.gets.upcase
-   # end
- # need a prompt to suggest they need to put in a valid input
-  #while player_hand.score(player_hand.cards) <= 21
-  while answer != "S"
 
+  while answer != "S"
+    while answer != "H"
+      puts "We don't understand your answer. Please try again"
+      answer = gets.chomp
+     end
       playing_deck.deal(player_hand)
       current_score = player_hand.score(player_hand.cards)
-      puts "New Card: #{player_hand.cards[-1].rank}#{player_hand.cards[-1].suit}"
+      #puts "New Card: #{player_hand.cards[-1].rank}#{player_hand.cards[-1].suit}"
 
-      if current_score <= 21
+        if current_score <= 21
         puts "Player score #{current_score}"
-        #binding.pry
         puts "Hit or Stand (H/S)"
         answer = gets.chomp.upcase
-      else
+        else
         ace_count = find_ace(player_hand.cards)
           if ace_count >= 1
             current_score = current_score - (10 * ace_count)
-            binding.pry
             puts "Player score #{current_score}"
             puts "Hit or Stand (H/S)"
             answer = gets.chomp
@@ -132,33 +118,38 @@ answer = gets.chomp.upcase
             puts "Bust! Game over..."
             break
           end
-      end
-
+        end
 
   puts "Player score #{player_hand.score(player_hand.cards)}"
   end
 
 
 
-dealer_hand.cards.each do |card|
-  puts "Dealer was dealt #{card.rank}#{card.suit}"
-end
+  dealer_hand.cards.each do |card|
+    puts "Dealer was dealt #{card.rank}#{card.suit}"
+  end
 
-puts "Dealer score #{dealer_hand.score(dealer_hand.cards)}"
-
-
+  puts "Dealer score #{dealer_hand.score(dealer_hand.cards)}"
 
 
-while dealer_hand.score(dealer_hand.cards) < 17
+
+
+  while dealer_hand.score(dealer_hand.cards) < 17
       playing_deck.deal(dealer_hand)
       puts "Dealer Hits..."
       puts "New Card: #{dealer_hand.cards[-1].rank}#{dealer_hand.cards[-1].suit}"
-end
+  end
 
 
   if dealer_hand.score(dealer_hand.cards) <= 21
     puts "Dealer stands with a score of #{dealer_hand.score(dealer_hand.cards)}"
-  else
+  end
+
+  if dealer_hand.score(dealer_hand.cards) <= 21 && player_hand.score(player_hand.cards) >=21
+    puts "Dealer won. You busted."
+  end
+
+  if dealer_hand.score(dealer_hand.cards) >= 21 && player_hand.score(player_hand.cards) <=21
    puts "You win! Dealer busts!"
   end
 
@@ -169,8 +160,9 @@ end
        else
          puts "Dealer wins"
        end
-
   end
+
+
 
 
 
